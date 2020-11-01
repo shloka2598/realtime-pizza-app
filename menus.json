@@ -54,7 +54,7 @@
   "image": "pizza.png",
   "price": "600",
   "size": "large"
-},{
+},{ 
   "_id": {
     "$oid": "5eee6717a27a66807cf2bea9"
   },
