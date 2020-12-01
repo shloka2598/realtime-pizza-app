@@ -1,7 +1,8 @@
- import axios from 'axios'
- import Noty from 'noty'
- import { initAdmin } from './admin'
- import moment from 'moment'
+import axios from 'axios'
+import Noty from 'noty'
+import { initAdmin } from './admin'
+import moment from 'moment';
+import { initStripe } from './stripe';
 
 let addToCart = document.querySelectorAll('.add-to-cart')
 let cartCounter = document.querySelector('#cartCounter')
@@ -34,7 +35,7 @@ addToCart.forEach((btn) => {
 
 // Remove alert message after X seconds
 const alertMsg = document.querySelector('#success-alert')
-if(alertMsg) {
+if (alertMsg) {
     setTimeout(() => {
         alertMsg.remove()
     }, 2000)
@@ -56,33 +57,36 @@ function updateStatus(order) {
     })
     let stepCompleted = true;
     statuses.forEach((status) => {
-       let dataProp = status.dataset.status
-       if(stepCompleted) {
+        let dataProp = status.dataset.status
+        if (stepCompleted) {
             status.classList.add('step-completed')
-       }
-       if(dataProp === order.status) {
+        }
+        if (dataProp === order.status) {
             stepCompleted = false
             time.innerText = moment(order.updatedAt).format('hh:mm A')
             status.appendChild(time)
-           if(status.nextElementSibling) {
-            status.nextElementSibling.classList.add('current')
-           }
-       }
+            if (status.nextElementSibling) {
+                status.nextElementSibling.classList.add('current')
+            }
+        }
     })
 
 }
 
 updateStatus(order);
 
+initStripe()
+
+
 // Socket
 let socket = io()
 
 // Join
-if(order) {
+if (order) {
     socket.emit('join', `order_${order._id}`)
 }
 let adminAreaPath = window.location.pathname
-if(adminAreaPath.includes('admin')) {
+if (adminAreaPath.includes('admin')) {
     initAdmin(socket)
     socket.emit('join', 'adminRoom')
 }
